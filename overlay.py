@@ -18,14 +18,14 @@ def overlay(msg, in_path, out_path):
     overlay = Image.new("RGBA", img.size, (255, 255, 255, 0))
     overlayDraw = ImageDraw.Draw(overlay)
 
-    h_base = 2 * h // 3
-    r_height = max(h // 8, 20)
-    shape = [(0, h_base), (w, h_base + r_height)]
+    r_height = max(h // 8, 26)
+    h_mid = 2 * h // 3
+    shape = [(0, h_mid - r_height // 2), (w, h_mid + r_height // 2)]
     overlayDraw.rectangle(shape, fill=(0, 0, 0, 128))
     fnt = ImageFont.truetype("LiberationSans-Regular.ttf", r_height // 2)
     tw, th = overlayDraw.textsize(msg, font=fnt)
     overlayDraw.text(
-        ((w - tw) / 2, h_base + (r_height - th) // 2),
+        ((w - tw) / 2, h_mid - th // 2),
         msg,
         font=fnt,
         fill=(255, 255, 255, 200),
