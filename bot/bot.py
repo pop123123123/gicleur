@@ -2,6 +2,7 @@ import os
 import re
 import discord
 import configparser
+import asyncio
 from bot.commands import Command
 
 client = discord.Client()
@@ -28,8 +29,9 @@ async def on_message(message):
             m = message.mentions
         command = re.sub(r"<@.*?>", "", command[6:], 0, re.MULTILINE)
         paths = await Command.gicle(command, message.channel, client.user, mentions=m)
-        for p in paths:
-            await message.channel.send(file=discord.File(p))
+        await asyncio.gather(
+            *[message.channel.send(file=discord.File(p)) for p in paths]
+        )
         # return await message.channel.send(file=discord.File(path))
 
 

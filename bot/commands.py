@@ -2,6 +2,7 @@ import requests
 import shutil
 import urllib
 import tempfile
+import asyncio
 
 import overlay
 
@@ -23,6 +24,15 @@ async def get_last_att(channel, bot):
     return attachments[-1]
 
 
+async def download_avatar_and_overlay(mention, msg):
+    out_path = tempPath(".jpg")
+    f = tempfile.NamedTemporaryFile(mode="w+b")
+    await mention.avatar_url.save(f.name)
+    overlay.overlay(msg, f.name, out_path)
+    f.close()
+    return out_path
+
+
 class Command:
     @classmethod
     async def gicle(cls, in_string, channel, bot, mentions=None):
@@ -34,15 +44,9 @@ class Command:
         if mentions is not None:
             if len(in_string.strip()) > 0:
                 msg = in_string.strip()
-            paths = []
-            for m in mentions:
-                out_path = tempPath(".jpg")
-                f = tempfile.NamedTemporaryFile(mode="w+b")
-                await m.avatar_url.save(f.name)
-                overlay.overlay(msg, f.name, out_path)
-                f.close()
-                paths.append(out_path)
-            return paths
+            return await asyncio.gather(
+                *[download_avatar_and_overlay(m, msg) for m in mentions]
+            )
 
         if "http" not in in_string:
             if len(in_string.strip()) > 0:
