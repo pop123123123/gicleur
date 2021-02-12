@@ -18,12 +18,10 @@ async def on_message(message):
     command = message.content
     if message.author == client.user:
         return
-    # elif command == "!":
-    #     return await message.channel.send(
-    #         "<@{0}>, No command has been passed.".format(message.author.id)
-    #     )
     elif command.startswith("!help_gicle"):
-        return await message.channel.send('!gicle {IMAGE_URL, [MENTION1, MENTION2, ...]} [MESSAGE]\tSends you back a modified image\n!help_gicle\tDisplays this help')
+        return await message.channel.send(
+            "!gicle {IMAGE_URL, [MENTION1, MENTION2, ...]} [MESSAGE]\tSends you back a modified image\n!help_gicle\tDisplays this help"
+        )
     elif command.startswith("!gicle"):
         m = None
         if len(message.mentions) > 0:
