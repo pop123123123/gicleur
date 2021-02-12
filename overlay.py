@@ -1,18 +1,25 @@
 from PIL import Image, ImageDraw, ImageFont
 
-W = 1 << 8
+MAX_SIZE = 1 << 8
+
+
+def get_size(size):
+    if size[0] > size[1]:
+        return (MAX_SIZE, MAX_SIZE * size[1] // size[0])
+    else:
+        return (MAX_SIZE * size[0] // size[1], MAX_SIZE)
 
 
 def overlay(msg, in_path, out_path):
     img = Image.open(in_path).convert("RGBA")
-    img = img.resize((W, W * img.height // img.width))
+    img = img.resize(get_size(img.size))
     w, h = img.width, img.height
 
     overlay = Image.new("RGBA", img.size, (255, 255, 255, 0))
     overlayDraw = ImageDraw.Draw(overlay)
 
     h_base = 2 * h // 3
-    r_height = h // 8
+    r_height = max(h // 8, 20)
     shape = [(0, h_base), (w, h_base + r_height)]
     overlayDraw.rectangle(shape, fill=(0, 0, 0, 128))
     fnt = ImageFont.truetype("LiberationSans-Regular.ttf", r_height // 2)
