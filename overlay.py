@@ -1,8 +1,11 @@
 from PIL import Image, ImageDraw, ImageFont
 
+W = 1 << 8
+
 
 def overlay(msg, in_path, out_path):
     img = Image.open(in_path).convert("RGBA")
+    img = img.resize((W, W * img.height // img.width))
     w, h = img.width, img.height
 
     overlay = Image.new("RGBA", img.size, (255, 255, 255, 0))
@@ -18,7 +21,7 @@ def overlay(msg, in_path, out_path):
         ((w - tw) / 2, h_base + (r_height - th) // 2),
         msg,
         font=fnt,
-        fill=(255, 255, 255, 128),
+        fill=(255, 255, 255, 200),
     )
 
     out = Image.alpha_composite(img, overlay)
