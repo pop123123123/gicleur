@@ -22,7 +22,8 @@ def overlay(msg, in_path, out_path):
     h_mid = 2 * h // 3
     shape = [(0, h_mid - r_height // 2), (w, h_mid + r_height // 2)]
     overlayDraw.rectangle(shape, fill=(0, 0, 0, 128))
-    fnt = ImageFont.truetype("LiberationSans-Regular.ttf", r_height // 2)
+    f_size = int(r_height * .6)
+    fnt = ImageFont.truetype("LiberationSans-Regular.ttf", f_size)
     tw, th = overlayDraw.textsize(msg, font=fnt)
     overlayDraw.text(
         ((w - tw) / 2, h_mid - th // 2),
