@@ -1,4 +1,7 @@
 import os
+import random
+import pyttsx3
+import tempfile
 import re
 import discord
 import configparser
@@ -6,6 +9,7 @@ import asyncio
 from bot.commands import Command
 
 client = discord.Client()
+engine = pyttsx3.init()
 
 
 @client.event
@@ -33,6 +37,29 @@ async def on_message(message):
             *[message.channel.send(file=discord.File(p)) for p in paths]
         )
         # return await message.channel.send(file=discord.File(path))
+
+
+def get_source(member):
+    fp = tempfile.NamedTemporaryFile(suffix=".mp3")
+    path = fp.name
+    fp.close()
+    msg = member.nick if member.nick is not None else member.name
+    engine.save_to_file(msg + "ah trayz envi de G clay", path)
+    engine.runAndWait()
+    return path
+
+
+@client.event
+async def on_voice_state_update(member, before, after):
+    if client.user != member and after is not None and member.voice is not None:
+        if random.randint(0, 10) == 0:
+            voiceClient = await member.voice.channel.connect()
+            path = get_source(member)
+            voiceClient.play(discord.FFmpegPCMAudio(path))
+            while voiceClient.is_playing():
+                await asyncio.sleep(1)
+            await voiceClient.disconnect()
+            os.remove(path)
 
 
 # Set up the base bot
